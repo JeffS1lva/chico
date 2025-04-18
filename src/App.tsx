@@ -1,16 +1,36 @@
 import { useState } from 'react';
 import { Search, User, ShoppingCart, Menu, X, Heart, CreditCard } from 'lucide-react';
 
+// Define types for our data
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+  rating: number;
+}
+
+interface CartItem extends Product {
+  quantity: number;
+}
+
+interface Testimonial {
+  name: string;
+  since: string;
+  text: string;
+}
+
 export function LagoinhaEcommerceApp() {
   // States
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  
+
   // Data
-  const categories = ["Masculino", "Feminino", "Infantil", "Acessórios", "Coleções"];
-  
+  const categories: string[] = ["Masculino", "Feminino", "Infantil", "Acessórios", "Coleções"];
+
   // Product data
   const products = [
     { id: 1, name: "Camiseta Lagoinha Worship", price: 89.99, image: "https://images.unsplash.com/photo-1574180566232-aaad1b5b8450?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D.png", category: "Masculino", rating: 4.8 },
@@ -22,62 +42,64 @@ export function LagoinhaEcommerceApp() {
     { id: 7, name: "Camiseta Manga Longa Worship", price: 110.99, image: "https://images.unsplash.com/photo-1701318227205-227aee07476c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D.png", category: "Masculino", rating: 4.6 },
     { id: 8, name: "Boné Lagoinha Conference", price: 69.99, image: "https://images.unsplash.com/photo-1609259921313-5bdecc25d10b?q=80&w=1985&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D.png", category: "Acessórios", rating: 4.4 }
   ];
-  
+
   const slides = [
     { image: "https://images.unsplash.com/photo-1618354691714-7d92150909db?q=80&w=2067&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D.png", title: "Nova Coleção Conference", desc: "Lançamento com até 20% OFF" },
     { image: "https://images.unsplash.com/photo-1503340588524-222d094c7066?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D.png", title: "Lagoinha Worship", desc: "Camisetas exclusivas com 15% OFF" }
   ];
-  
+
   // Cart state
-  const [cartItems, setCartItems] = useState([
+  const [cartItems, setCartItems] = useState<CartItem[]>([
     { ...products[0], quantity: 1 },
     { ...products[2], quantity: 2 }
   ]);
-  
+
   // Special collections 
   const specialCollections = [
     { title: "Coleção Conference 2025", description: "Camisetas exclusivas do maior evento do ano!", image: "https://images.unsplash.com/photo-1574180566232-aaad1b5b8450?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D.png" },
     { title: "Linha Lagoinha Worship", description: "Camisetas inspiradas nas músicas que tocam seu coração", image: "https://images.unsplash.com/photo-1574180566232-aaad1b5b8450?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
     { title: "Lagoinha Kids", description: "Roupas confortáveis e divertidas para os pequenos", image: "https://images.unsplash.com/photo-1574180566232-aaad1b5b8450?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" }
   ];
-  
+
   // Testimonials
-  const testimonials = [
+  const testimonials: Testimonial[] = [
     { name: "Mariana Silva", since: "Cliente desde 2023", text: "Amo as camisetas da Lagoinha! O tecido é super confortável e as estampas são lindas. Sempre recebo elogios quando uso." },
     { name: "Carlos Mendes", since: "Cliente desde 2022", text: "As camisetas da Conference são incríveis! Já comprei várias edições e a qualidade é sempre excelente. Recomendo demais!" },
     { name: "Patrícia Oliveira", since: "Cliente desde 2024", text: "A entrega foi super rápida e o atendimento é excelente! As camisetas têm um significado especial e a qualidade é top." }
   ];
-  
+
   // Helper functions
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  
-  const updateQuantity = (id: number, qty: number) => {
-    setCartItems(items => items.map(item => item.id === id ? {...item, quantity: qty} : item));
+
+  const updateQuantity = (id: number, qty: number): void => {
+    setCartItems(items =>
+      items.map(item => item.id === id ? { ...item, quantity: qty } : item)
+    );
   };
-  
-  const removeItem = (id: number) => {
+
+  const removeItem = (id: number): void => {
     setCartItems(items => items.filter(item => item.id !== id));
   };
-  
-  const addToCart = (product: { id: any; name?: string; price?: number; image?: string; category?: string; rating?: number; quantity?: number; }) => {
+
+  const addToCart = (product: Product): void => {
     const existingItem = cartItems.find(item => item.id === product.id);
     if (existingItem) {
       updateQuantity(product.id, existingItem.quantity + 1);
     } else {
-      setCartItems([...cartItems, {...product, quantity: 1}]);
+      setCartItems([...cartItems, { ...product, quantity: 1 }]);
     }
     setShowCart(true);
   };
-  
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Chico Store</h1>
-            
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Lagoinha Store</h1>
+
             {/* Search bar - desktop */}
             <div className="hidden md:flex flex-1 mx-8">
               <div className="relative w-full">
@@ -85,7 +107,7 @@ export function LagoinhaEcommerceApp() {
                 <Search className="absolute right-3 top-2.5 text-gray-400" size={18} />
               </div>
             </div>
-            
+
             {/* Nav - desktop */}
             <nav className="hidden md:flex items-center space-x-6">
               <button onClick={() => setShowLogin(true)} className="flex items-center text-gray-700 hover:text-blue-600">
@@ -102,13 +124,13 @@ export function LagoinhaEcommerceApp() {
                 )}
               </button>
             </nav>
-            
+
             {/* Mobile menu button */}
             <button className="md:hidden" onClick={() => setShowMobileMenu(!showMobileMenu)}>
               {showMobileMenu ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
-          
+
           {/* Mobile menu */}
           {showMobileMenu && (
             <div className="md:hidden mt-3 py-3 border-t border-gray-100">
@@ -132,7 +154,7 @@ export function LagoinhaEcommerceApp() {
             </div>
           )}
         </div>
-        
+
         {/* Desktop categories */}
         <div className="hidden md:block border-t border-gray-100">
           <div className="container mx-auto px-4">
@@ -151,8 +173,8 @@ export function LagoinhaEcommerceApp() {
       <main className="flex-grow">
         {/* Carousel */}
         <div className="relative overflow-hidden h-56 md:h-80">
-          <div 
-            className="flex transition-transform duration-500 h-full" 
+          <div
+            className="flex transition-transform duration-500 h-full"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
           >
             {slides.map((slide, i) => (
@@ -170,33 +192,33 @@ export function LagoinhaEcommerceApp() {
               </div>
             ))}
           </div>
-          
+
           {/* Carousel indicators */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
             {slides.map((_, i) => (
-              <button 
+              <button
                 key={i}
                 className={`w-2 h-2 rounded-full ${i === currentSlide ? 'bg-white' : 'bg-white/50'}`}
                 onClick={() => setCurrentSlide(i)}
               />
             ))}
           </div>
-          
+
           {/* Carousel navigation buttons */}
-          <button 
+          <button
             onClick={() => setCurrentSlide(prev => (prev === 0 ? slides.length - 1 : prev - 1))}
             className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 p-2 rounded-full text-blue-600 hover:bg-white"
           >
             ←
           </button>
-          <button 
+          <button
             onClick={() => setCurrentSlide(prev => (prev === slides.length - 1 ? 0 : prev + 1))}
             className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 p-2 rounded-full text-blue-600 hover:bg-white"
           >
             →
           </button>
         </div>
-        
+
         {/* Featured products */}
         <div className="container mx-auto px-4 py-8">
           <h2 className="text-2xl font-bold mb-6">Camisetas em Destaque</h2>
@@ -204,10 +226,10 @@ export function LagoinhaEcommerceApp() {
             {products.map(product => (
               <div key={product.id} className="bg-white border rounded-xl overflow-hidden hover:shadow-lg group">
                 <div className="relative">
-                  <img 
-                    src={product.image} 
-                    alt={product.name} 
-                    className="w-full aspect-square object-cover group-hover:scale-105 transition duration-300" 
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full aspect-square object-cover group-hover:scale-105 transition duration-300"
                   />
                   <button className="absolute top-2 right-2 bg-white/80 p-2 rounded-full text-gray-600 hover:text-red-500">
                     <Heart size={16} />
@@ -216,7 +238,7 @@ export function LagoinhaEcommerceApp() {
                 <div className="p-4">
                   <span className="text-xs text-blue-600 font-medium">{product.category}</span>
                   <h3 className="font-medium text-gray-900 mb-1 truncate">{product.name}</h3>
-                  
+
                   {/* Rating stars */}
                   <div className="flex text-amber-400 mb-2">
                     {[...Array(5)].map((_, i) => (
@@ -224,10 +246,10 @@ export function LagoinhaEcommerceApp() {
                     ))}
                     <span className="text-gray-500 text-xs ml-1">({product.rating})</span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <span className="font-bold">R$ {product.price.toFixed(2)}</span>
-                    <button 
+                    <button
                       className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full"
                       onClick={() => addToCart(product)}
                     >
@@ -239,7 +261,7 @@ export function LagoinhaEcommerceApp() {
             ))}
           </div>
         </div>
-        
+
         {/* Promo banner */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-700 py-8 my-6">
           <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
@@ -251,24 +273,24 @@ export function LagoinhaEcommerceApp() {
               </button>
             </div>
             <div className="md:w-1/3">
-              <img 
-                src="https://images.unsplash.com/photo-1574180566232-aaad1b5b8450?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
-                alt="Promoção" 
+              <img
+                src="https://images.unsplash.com/photo-1618436880616-5b479f22a811?q=80&w=1958&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Promoção"
                 className="rounded-lg"
               />
             </div>
           </div>
         </div>
-        
+
         {/* Browse by categories */}
         <div className="container mx-auto px-4 py-8">
           <h2 className="text-2xl font-bold mb-6">Navegue por Categorias</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {categories.map((category, index) => (
               <a href="#" key={index} className="relative group overflow-hidden rounded-lg h-40">
-                <img 
-                  src={`/api/placeholder/400/300?text=Camisetas+${category}`} 
-                  alt={category} 
+                <img
+                  src={`https://images.unsplash.com/photo-1618436880616-5b479f22a811?q=80&w=1958&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D${category}`}
+                  alt={category}
                   className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
@@ -278,7 +300,7 @@ export function LagoinhaEcommerceApp() {
             ))}
           </div>
         </div>
-        
+
         {/* Special editions */}
         <div className="container mx-auto px-4 py-8">
           <h2 className="text-2xl font-bold mb-6">Edições Especiais</h2>
@@ -295,7 +317,7 @@ export function LagoinhaEcommerceApp() {
             ))}
           </div>
         </div>
-        
+
         {/* Testimonials */}
         <div className="bg-gray-100 py-12">
           <div className="container mx-auto px-4">
@@ -323,7 +345,7 @@ export function LagoinhaEcommerceApp() {
             </div>
           </div>
         </div>
-        
+
         {/* Newsletter */}
         <div className="bg-white py-12">
           <div className="container mx-auto px-4 text-center">
@@ -353,7 +375,7 @@ export function LagoinhaEcommerceApp() {
                 <a href="#" className="bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-600">y</a>
               </div>
             </div>
-            
+
             <div>
               <h3 className="font-bold mb-3">Links Rápidos</h3>
               <ul className="space-y-1 text-gray-400">
@@ -362,7 +384,7 @@ export function LagoinhaEcommerceApp() {
                 ))}
               </ul>
             </div>
-            
+
             <div>
               <h3 className="font-bold mb-3">Pagamentos</h3>
               <div className="flex flex-wrap gap-2">
@@ -395,7 +417,7 @@ export function LagoinhaEcommerceApp() {
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="overflow-auto flex-1">
               {cartItems.length === 0 ? (
                 <div className="py-8 text-center">
@@ -428,7 +450,7 @@ export function LagoinhaEcommerceApp() {
                 </div>
               )}
             </div>
-            
+
             {cartItems.length > 0 && (
               <div className="border-t p-4">
                 <div className="flex justify-between font-bold mb-4">
@@ -454,19 +476,19 @@ export function LagoinhaEcommerceApp() {
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="p-6">
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="email">Email</label>
                 <input id="email" type="email" className="w-full p-2 border border-gray-300 rounded-lg" placeholder="seu@email.com" />
               </div>
-              
+
               <div className="mb-6">
                 <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="password">Senha</label>
                 <input id="password" type="password" className="w-full p-2 border border-gray-300 rounded-lg" placeholder="••••••••" />
                 <a href="#" className="text-sm text-blue-600 hover:text-blue-800 mt-1 inline-block">Esqueceu sua senha?</a>
               </div>
-              
+
               <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium mb-4">Entrar</button>
               <div className="text-center text-sm">
                 <span className="text-gray-600">Não tem conta? </span>
