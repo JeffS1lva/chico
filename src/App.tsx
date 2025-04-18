@@ -98,7 +98,7 @@ export function LagoinhaEcommerceApp() {
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Lagoinha Store</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Chico Store</h1>
 
             {/* Search bar - desktop */}
             <div className="hidden md:flex flex-1 mx-8">
