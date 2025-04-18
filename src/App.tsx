@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { Search, User, ShoppingCart, Menu, X, Heart, CreditCard } from 'lucide-react';
+import { Header } from './components/Header';
+import { Carousel } from './components/Carousel';
+import { ProductCard } from './components/ProductCard';
+import { CartModal } from './components/CartModal';
+import { LoginModal } from './components/LoginModal';
+import { TestimonialCard } from './components/TestimonialCard';
+import { Footer } from './components/Footer';
+import { CreditCard, ShoppingCart, X } from 'lucide-react';
 
 // Define types for our data
 interface Product {
@@ -94,181 +101,44 @@ export function LagoinhaEcommerceApp() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Chico Store</h1>
-
-            {/* Search bar - desktop */}
-            <div className="hidden md:flex flex-1 mx-8">
-              <div className="relative w-full">
-                <input type="text" placeholder="Buscar camisetas..." className="w-full py-2 px-4 border rounded-full bg-gray-50" />
-                <Search className="absolute right-3 top-2.5 text-gray-400" size={18} />
-              </div>
-            </div>
-
-            {/* Nav - desktop */}
-            <nav className="hidden md:flex items-center space-x-6">
-              <button onClick={() => setShowLogin(true)} className="flex items-center text-gray-700 hover:text-blue-600">
-                <User size={20} className="mr-1" />
-                <span>Entrar</span>
-              </button>
-              <button onClick={() => setShowCart(true)} className="flex items-center text-gray-700 hover:text-blue-600 relative">
-                <ShoppingCart size={20} className="mr-1" />
-                <span>Carrinho</span>
-                {cartCount > 0 && (
-                  <span className="absolute -top-3 -right-2 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
-              </button>
-            </nav>
-
-            {/* Mobile menu button */}
-            <button className="md:hidden" onClick={() => setShowMobileMenu(!showMobileMenu)}>
-              {showMobileMenu ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-
-          {/* Mobile menu */}
-          {showMobileMenu && (
-            <div className="md:hidden mt-3 py-3 border-t border-gray-100">
-              <div className="relative mb-3">
-                <input type="text" placeholder="Buscar camisetas..." className="w-full py-2 px-4 border rounded-full" />
-                <Search className="absolute right-3 top-2.5 text-gray-400" size={18} />
-              </div>
-              <nav className="flex flex-col space-y-2">
-                <button onClick={() => setShowLogin(true)} className="flex items-center text-gray-700 px-2 py-1">
-                  <User size={18} className="mr-2" />
-                  <span>Entrar</span>
-                </button>
-                <button onClick={() => setShowCart(true)} className="flex items-center text-gray-700 px-2 py-1">
-                  <ShoppingCart size={18} className="mr-2" />
-                  <span>Carrinho {cartCount > 0 && `(${cartCount})`}</span>
-                </button>
-                {categories.map((cat, i) => (
-                  <a key={i} href="#" className="px-2 py-1">{cat}</a>
-                ))}
-              </nav>
-            </div>
-          )}
-        </div>
-
-        {/* Desktop categories */}
-        <div className="hidden md:block border-t border-gray-100">
-          <div className="container mx-auto px-4">
-            <ul className="flex space-x-8 py-2 text-sm">
-              {categories.map((cat, i) => (
-                <li key={i}>
-                  <a href="#" className="text-gray-600 hover:text-blue-600">{cat}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </header>
+      <Header
+        categories={categories}
+        cartCount={cartCount}
+        showMobileMenu={showMobileMenu}
+        setShowMobileMenu={setShowMobileMenu}
+        setShowLogin={setShowLogin}
+        setShowCart={setShowCart}
+      />
 
       {/* Main Content */}
       <main className="flex-grow">
-        {/* Carousel */}
-        <div className="relative overflow-hidden h-56 md:h-80">
-          <div
-            className="flex transition-transform duration-500 h-full"
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-          >
-            {slides.map((slide, i) => (
-              <div key={i} className="min-w-full h-full relative">
-                <img src={slide.image} alt={slide.title} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
-                  <div className="text-white p-6 md:p-12 max-w-lg">
-                    <h2 className="text-2xl md:text-4xl font-bold mb-2">{slide.title}</h2>
-                    <p className="text-lg mb-4">{slide.desc}</p>
-                    <button className="bg-white text-blue-600 hover:bg-gray-100 px-6 py-2 rounded-full font-medium">
-                      Ver coleção
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+        <Carousel
+          slides={slides}
+          currentSlide={currentSlide}
+          setCurrentSlide={setCurrentSlide}
+        />
 
-          {/* Carousel indicators */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                className={`w-2 h-2 rounded-full ${i === currentSlide ? 'bg-white' : 'bg-white/50'}`}
-                onClick={() => setCurrentSlide(i)}
-              />
-            ))}
-          </div>
-
-          {/* Carousel navigation buttons */}
-          <button
-            onClick={() => setCurrentSlide(prev => (prev === 0 ? slides.length - 1 : prev - 1))}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 p-2 rounded-full text-blue-600 hover:bg-white"
-          >
-            ←
-          </button>
-          <button
-            onClick={() => setCurrentSlide(prev => (prev === slides.length - 1 ? 0 : prev + 1))}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 p-2 rounded-full text-blue-600 hover:bg-white"
-          >
-            →
-          </button>
-        </div>
-
-        {/* Featured products */}
+        {/* Featured Products Section */}
         <div className="container mx-auto px-4 py-8">
           <h2 className="text-2xl font-bold mb-6">Camisetas em Destaque</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {products.map(product => (
-              <div key={product.id} className="bg-white border rounded-xl overflow-hidden hover:shadow-lg group">
-                <div className="relative">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full aspect-square object-cover group-hover:scale-105 transition duration-300"
-                  />
-                  <button className="absolute top-2 right-2 bg-white/80 p-2 rounded-full text-gray-600 hover:text-red-500">
-                    <Heart size={16} />
-                  </button>
-                </div>
-                <div className="p-4">
-                  <span className="text-xs text-blue-600 font-medium">{product.category}</span>
-                  <h3 className="font-medium text-gray-900 mb-1 truncate">{product.name}</h3>
-
-                  {/* Rating stars */}
-                  <div className="flex text-amber-400 mb-2">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className={i < Math.floor(product.rating) ? "text-amber-400" : "text-gray-200"}>★</span>
-                    ))}
-                    <span className="text-gray-500 text-xs ml-1">({product.rating})</span>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold">R$ {product.price.toFixed(2)}</span>
-                    <button
-                      className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full"
-                      onClick={() => addToCart(product)}
-                    >
-                      <ShoppingCart size={16} />
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ProductCard
+                key={product.id}
+                product={product}
+                addToCart={addToCart}
+              />
             ))}
           </div>
         </div>
 
-        {/* Promo banner */}
+        {/* Promo Banner */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-700 py-8 my-6">
           <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
             <div className="text-white md:w-1/2 mb-4 md:mb-0">
               <h2 className="text-2xl font-bold mb-2">Promoção para membros!</h2>
               <p className="text-white/90 mb-4">Use o cupom <span className="font-bold">LAGOFIEL10</span> e ganhe 10% OFF</p>
-              <button className="bg-white text-blue-700 px-6 py-2 rounded-full font-medium">
+              <button className="bg-white text-blue-700 px-6 py-2 rounded-full font-medium transition duration-300 hover:bg-blue-600 hover:text-white">
                 Aproveitar agora
               </button>
             </div>
@@ -276,7 +146,7 @@ export function LagoinhaEcommerceApp() {
               <img
                 src="https://images.unsplash.com/photo-1618436880616-5b479f22a811?q=80&w=1958&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Promoção"
-                className="rounded-lg"
+                className="rounded-lg shadow-xl"
               />
             </div>
           </div>
@@ -301,46 +171,13 @@ export function LagoinhaEcommerceApp() {
           </div>
         </div>
 
-        {/* Special editions */}
-        <div className="container mx-auto px-4 py-8">
-          <h2 className="text-2xl font-bold mb-6">Edições Especiais</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {specialCollections.map((collection, index) => (
-              <div key={index} className="bg-white border rounded-xl overflow-hidden hover:shadow-lg">
-                <img src={collection.image} alt={collection.title} className="w-full h-48 object-cover" />
-                <div className="p-4">
-                  <h3 className="font-bold text-xl mb-2">{collection.title}</h3>
-                  <p className="text-gray-600 mb-4">{collection.description}</p>
-                  <button className="text-blue-600 font-medium hover:text-blue-800">Ver coleção →</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Testimonials */}
         <div className="bg-gray-100 py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-8 text-center">O que nossos clientes dizem</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {testimonials.map((testimonial, index) => (
-                <div key={index} className="bg-white p-6 rounded-xl shadow">
-                  <div className="flex text-amber-400 mb-3">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i}>★</span>
-                    ))}
-                  </div>
-                  <p className="text-gray-700 mb-4">"{testimonial.text}"</p>
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-500 font-bold mr-3">
-                      {testimonial.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="font-medium">{testimonial.name}</p>
-                      <p className="text-sm text-gray-500">{testimonial.since}</p>
-                    </div>
-                  </div>
-                </div>
+                <TestimonialCard key={index} testimonial={testimonial} />
               ))}
             </div>
           </div>
@@ -353,7 +190,7 @@ export function LagoinhaEcommerceApp() {
             <p className="text-gray-600 mb-6 max-w-lg mx-auto">Inscreva-se para receber em primeira mão nossas promoções, lançamentos e conteúdos exclusivos.</p>
             <div className="flex max-w-md mx-auto">
               <input type="email" placeholder="Seu melhor e-mail" className="flex-1 p-3 border border-gray-300 rounded-l-lg" />
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-r-lg font-medium">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-r-lg font-medium transition duration-300">
                 Inscrever
               </button>
             </div>
@@ -369,22 +206,34 @@ export function LagoinhaEcommerceApp() {
               <h3 className="font-bold text-xl mb-3 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Lagoinha Store</h3>
               <p className="text-gray-400">Vestindo a família Lagoinha com estilo e propósito.</p>
               <div className="flex space-x-4 mt-4">
-                <a href="#" className="bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-600">f</a>
-                <a href="#" className="bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-400">t</a>
-                <a href="#" className="bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-pink-600">i</a>
-                <a href="#" className="bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-600">y</a>
+                <a href="#" className="bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-600 transition">
+                  f
+                </a>
+                <a href="#" className="bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-400 transition">
+                  t
+                </a>
+                <a href="#" className="bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-pink-600 transition">
+                  i
+                </a>
+                <a href="#" className="bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-600 transition">
+                  y
+                </a>
               </div>
             </div>
 
+            {/* Links */}
             <div>
               <h3 className="font-bold mb-3">Links Rápidos</h3>
               <ul className="space-y-1 text-gray-400">
                 {["Sobre nós", "Contato", "FAQ", "Termos de uso", "Política de privacidade"].map((link, i) => (
-                  <li key={i}><a href="#" className="hover:text-white">{link}</a></li>
+                  <li key={i}>
+                    <a href="#" className="hover:text-white transition">{link}</a>
+                  </li>
                 ))}
               </ul>
             </div>
 
+            {/* Payments & Atendimento */}
             <div>
               <h3 className="font-bold mb-3">Pagamentos</h3>
               <div className="flex flex-wrap gap-2">
@@ -392,112 +241,32 @@ export function LagoinhaEcommerceApp() {
                   <CreditCard size={18} className="text-gray-400" />
                 </div>
                 {["PIX", "PayPal", "Boleto"].map((method, i) => (
-                  <div key={i} className="bg-gray-800 p-2 rounded">{method}</div>
+                  <div key={i} className="bg-gray-800 p-2 rounded">
+                    <p className="text-gray-400">{method}</p>
+                  </div>
                 ))}
               </div>
-              <div className="mt-4">
-                <h3 className="font-bold mb-2">Atendimento</h3>
-                <p className="text-gray-400 text-sm">Segunda a Sexta: 9h às 18h</p>
-                <p className="text-gray-400 text-sm">contato@lagoinhastore.com.br</p>
-                <p className="text-gray-400 text-sm">(31) 9999-9999</p>
-              </div>
-              <p className="text-sm text-gray-500 mt-4">© 2025 Lagoinha Store. Todos os direitos reservados.</p>
             </div>
+          </div>
+
+          <div className="mt-8 text-center text-gray-500">
+            <p>© 2025 Lagoinha Store - Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
 
-      {/* Cart Modal */}
-      {showCart && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[80vh] flex flex-col">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h2 className="text-lg font-semibold">Seu Carrinho</h2>
-              <button onClick={() => setShowCart(false)} className="text-gray-500 hover:text-gray-700">
-                <X size={20} />
-              </button>
-            </div>
+      {/* Modals */}
+      <CartModal
+        showCart={showCart}
+        setShowCart={setShowCart}
+        cartItems={cartItems}
+        subtotal={subtotal}
+        updateQuantity={updateQuantity}
+        removeItem={removeItem}
+      />
 
-            <div className="overflow-auto flex-1">
-              {cartItems.length === 0 ? (
-                <div className="py-8 text-center">
-                  <ShoppingCart size={48} className="mx-auto text-gray-300 mb-2" />
-                  <h3 className="text-lg font-medium">Seu carrinho está vazio</h3>
-                  <p className="text-gray-500">Adicione produtos para continuar</p>
-                </div>
-              ) : (
-                <div>
-                  {cartItems.map(item => (
-                    <div key={item.id} className="flex p-4 border-b">
-                      <img src={item.image} alt={item.name} className="w-16 h-16 rounded object-cover" />
-                      <div className="ml-3 flex-1">
-                        <div className="flex justify-between">
-                          <h3 className="font-medium">{item.name}</h3>
-                          <p>R$ {(item.price * item.quantity).toFixed(2)}</p>
-                        </div>
-                        <p className="text-sm text-gray-500">{item.category}</p>
-                        <div className="flex justify-between mt-2">
-                          <div className="flex items-center border rounded">
-                            <button className="px-2" onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}>-</button>
-                            <span className="px-2">{item.quantity}</span>
-                            <button className="px-2" onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
-                          </div>
-                          <button className="text-red-500 text-sm" onClick={() => removeItem(item.id)}>Remover</button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+      <LoginModal showLogin={showLogin} setShowLogin={setShowLogin} />
 
-            {cartItems.length > 0 && (
-              <div className="border-t p-4">
-                <div className="flex justify-between font-bold mb-4">
-                  <p>Subtotal</p>
-                  <p>R$ {subtotal.toFixed(2)}</p>
-                </div>
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
-                  Finalizar compra
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Login Modal */}
-      {showLogin && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h2 className="text-lg font-semibold">Entrar na conta</h2>
-              <button onClick={() => setShowLogin(false)} className="text-gray-500">
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="p-6">
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="email">Email</label>
-                <input id="email" type="email" className="w-full p-2 border border-gray-300 rounded-lg" placeholder="seu@email.com" />
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="password">Senha</label>
-                <input id="password" type="password" className="w-full p-2 border border-gray-300 rounded-lg" placeholder="••••••••" />
-                <a href="#" className="text-sm text-blue-600 hover:text-blue-800 mt-1 inline-block">Esqueceu sua senha?</a>
-              </div>
-
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium mb-4">Entrar</button>
-              <div className="text-center text-sm">
-                <span className="text-gray-600">Não tem conta? </span>
-                <a href="#" className="text-blue-600 hover:text-blue-800 font-medium">Cadastre-se</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
